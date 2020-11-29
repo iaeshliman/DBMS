@@ -29,5 +29,7 @@ public class Driver
 		threads.get(0).start();
 		
 		//System.out.println("===== Updated State of the Data Manager =====\n" + dm);
+		
+		System.out.println("Hey Gabe");
 	}
 }
