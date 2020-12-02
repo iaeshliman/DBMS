@@ -50,4 +50,13 @@ public class DatabaseManager
 	{
 		return this.threads;
 	}
+	
+	
+	// Operations
+	public void addRequest(String request)
+	{
+		this.requests.add(request);
+	}
+	
+	
 }

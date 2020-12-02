@@ -1,5 +1,7 @@
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
+import aeshliman.UI.TellerInterface;
 import aeshliman.database.DataManager;
 import aeshliman.database.DatabaseManager;
 import aeshliman.database.PortThread;
@@ -10,12 +12,13 @@ import aeshliman.database.PortThread;
  * Description:
  */
 
-public class Driver
+public class Driver// extends Thread
 {	
 	public static void main(String[] args)
 	{	
-		DatabaseManager dbms = new DatabaseManager();
 		
+		DatabaseManager dbms = new DatabaseManager();
+		/*
 		DataManager dm = dbms.getDM();
 		
 		//System.out.println("===== Current State of the Data Manager =====\n" + dm);
@@ -29,7 +32,14 @@ public class Driver
 		threads.get(0).start();
 		
 		//System.out.println("===== Updated State of the Data Manager =====\n" + dm);
+		*/
 		
-		System.out.println("Hey Gabe");
+		TellerInterface tellerInterface = new TellerInterface(dbms,3);
+		tellerInterface.startTellers();
+		
+		Queue<String> q = dbms.getRequests();
+		
+		q.forEach(System.out::println);
+		
 	}
 }
