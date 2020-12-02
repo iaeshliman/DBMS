@@ -9,15 +9,11 @@ public class PortThread extends Thread
 	// Instance Variables
 	private DatabaseManager dbms;
 	private DataManager dm;
-	private String name;
-	private static int count = 0;
-	private static int tranId = 0;
 	
 	public PortThread(DatabaseManager dbms)
 	{
 		this.dbms = dbms;
 		this.dm = dbms.getDM();
-		this.name = "Port " + count++;
 	}
 	
 	public void run()
@@ -27,19 +23,19 @@ public class PortThread extends Thread
 			this.update(dbms.getRequests().poll());
 		}
 		
-		dm.appendLog("<END " + this.name + ">\n");
+		dm.appendLog("<END>\n");
 	}
 	
 	public void update(String req)
 	{
 		String[] queries = req.split(";");
 		LinkedList<Lock> locks = new LinkedList<Lock>();
-		int id = ++tranId;
+		int id = Integer.parseInt(queries[0]);
 		dm.appendLog("<BEGIN " + id + ">\n");
 		
 		for(int i=0; i<queries.length; i++)
 		{
-			Scanner parse = new Scanner(queries[i]);
+			Scanner parse = new Scanner(queries[i+1]);
 			
 			int src = parse.nextInt();
 			int dst = parse.nextInt();
@@ -64,10 +60,5 @@ public class PortThread extends Thread
 		
 		locks.forEach((value) -> {value.unlock();});
 		dm.appendLog("<COMMIT " + id + ">\n");
-	}
-	
-	public String toString()
-	{
-		return name;
 	}
 }

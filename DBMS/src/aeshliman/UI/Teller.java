@@ -13,6 +13,8 @@ public class Teller
 	// Instance Variables
 	private TellerInterface tellerInterface;
 	private static int requestCount = 10;
+	private static int transactionID = 1;
+	private boolean gotResponse = true;
 	
 	// Constructors
 	public Teller(TellerInterface tellerInterface)
@@ -24,7 +26,7 @@ public class Teller
 	{
 		while(requestCount>0)
 		{
-			this.tellerInterface.addRequest(this.newRequest());
+			this.tellerInterface.addRequest(this.newRequest(),this);
 			requestCount--;
 		}
 	}
@@ -34,7 +36,7 @@ public class Teller
 	
 	public String newRequest()
 	{
-		String result = "";
+		String result = transactionID++ + ";";
 		Random ran = new Random();
 		for(int i=0; i<ran.nextInt(5)+1;i++)
 		{
@@ -60,5 +62,11 @@ public class Teller
 		}
 		
 		return result.substring(0,result.length()-1);
+	}
+	
+	public void addResponse(String response)
+	{
+		gotResponse = true;
+		// Do thing with the response
 	}
 }
