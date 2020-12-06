@@ -3,6 +3,12 @@ package aeshliman.database;
 import java.util.LinkedList;
 import java.util.concurrent.locks.*;
 
+/*
+ * Author: Isaac Aeshliman
+ * Date: 11/29/2020
+ * Description: A single entry in the data repository containing a linked list of accounts.
+ */
+
 public class HashEntry
 {
 	// Instance variables
@@ -65,18 +71,5 @@ public class HashEntry
 		}
 		
 		return toFile.trim();
-	}
-	
-	// toString
-	public String toString()
-	{
-		String toString = "";
-		
-		for(int i=0; i<this.accounts.size(); i++)
-		{
-			toString += this.accounts.get(i).toString() + "\n";
-		}
-		
-		return toString;
 	}
 }

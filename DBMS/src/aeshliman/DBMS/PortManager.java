@@ -3,8 +3,14 @@ package aeshliman.DBMS;
 import java.lang.Thread.State;
 import java.util.LinkedList;
 import java.util.Queue;
-import aeshliman.UI.Teller;
 import aeshliman.database.DataRepository;
+
+/*
+ * Author: Isaac Aeshliman
+ * Date: 12/6/2020
+ * Description: Manages the port threads. Initializing, starting, and perform a selection of operations
+ * 				to either determine information about the status of the ports or end them.
+ */
 
 public class PortManager
 {

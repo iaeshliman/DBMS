@@ -8,6 +8,13 @@ import java.util.concurrent.locks.Lock;
 import aeshliman.database.DataRepository;
 import aeshliman.database.HashEntry;
 
+/*
+ * Author: Isaac Aeshliman
+ * Date: 12/6/2020
+ * Description: A port in the dbms reading from the request queue, processing account transfers
+ * 				in an atomic manner, updating a log file, and writing to the response queue
+ */
+
 public class Port extends Thread
 {
 	// Constants
@@ -65,8 +72,7 @@ public class Port extends Thread
 	{
 		LinkedList<String> localLog = new LinkedList<String>();
 		LinkedList<Lock> locks = new LinkedList<Lock>();
-		String[] queries = req.split(";");
-		int id = Integer.parseInt(queries[0]);
+		int id = Integer.parseInt(req.split(";")[0]);
 		
 		// Appends begin statement to log file
 		data.appendLog("<BEGIN " + id + ">\n");

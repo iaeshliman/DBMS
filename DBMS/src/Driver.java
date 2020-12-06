@@ -7,7 +7,8 @@ import aeshliman.database.DataRepository;
 /*
  * Author: Isaac Aeshliman
  * Date:
- * Description:
+ * Description: Drives the DBMS program. Initializes all objects and runs methods to start all threads.
+ * 				Checks for when the threads are finished then ends the program and finalizes the log file.
  */
 
 public class Driver
@@ -42,6 +43,9 @@ public class Driver
 		
 		// Stores changes into persistent storage and appends <END> to log file
 		data.writeFile();
-		data.appendLog("<END>");
+		data.appendLog("<END>\n");
+		
+		// Goodbye
+		System.out.println("DBMS complete");
 	}
 }

@@ -3,6 +3,13 @@ package aeshliman.UI;
 import java.util.Queue;
 import java.util.Random;
 
+/*
+ * Author: Isaac Aeshliman
+ * Date: 12/6/2020
+ * Description: A teller which generates account transfer requests and writes them to the request queue.
+ * 				Waits to generate another transfer request until it receives a response.
+ */
+
 public class Teller extends Thread
 {
 	// Constants
@@ -10,6 +17,8 @@ public class Teller extends Thread
 	private final int minAccNum = 42001;
 	private final float maxBalance = 5000;
 	private final float minBalance = 100;
+	private final int minTransfers = 1;
+	private final int maxTransfers = 5;
 	
 	// Instance Variables
 	private static int transactionID = 1;
@@ -57,11 +66,11 @@ public class Teller extends Thread
 		}
 	}
 	
-	public String newRequest() // Generates a semicolon delimited request (1-5 account transfers) with ID at beginning
+	public String newRequest() // Generates a semicolon delimited request with ID at beginning
 	{
 		String result = transactionID++ + ";";
 		Random ran = new Random();
-		for(int i=0; i<ran.nextInt(5)+1;i++)
+		for(int i=0; i<ran.nextInt(maxTransfers)+minTransfers;i++)
 		{
 			// Variable declarations
 			int accNum1;

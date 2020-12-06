@@ -3,6 +3,13 @@ package aeshliman.UI;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/*
+ * Author: Isaac Aeshliman
+ * Date: 12/6/2020
+ * Description: Manages the teller threads. Initializing, starting, and perform a selection of operations
+ * 				to determine information about the status of the tellers.
+ */
+
 public class TellerManager
 {
 	// Constants

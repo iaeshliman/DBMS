@@ -1,10 +1,19 @@
 package aeshliman.database;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.locks.*;
+
+/*
+ * Author: Isaac Aeshliman
+ * Date: 11/29/2020
+ * Description: A data repository read from a txt file. Contains an array of hash entries.
+ * 				Keeps a local copy of source, destination, and log files. Hash keys
+ * 				are calculated by account number mod 20 to split accounts into 20 groups.
+ */
 
 public class DataRepository
 {

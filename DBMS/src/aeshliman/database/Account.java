@@ -3,7 +3,7 @@ package aeshliman.database;
 /*
  * Author: Isaac Aeshliman
  * Date: 11/29/2020
- * Description: A bank account, containing the fist name, last name, account number, and balance.
+ * Description: A bank account, containing the first name, last name, account number, and balance.
  */
 
 public class Account
@@ -56,11 +56,5 @@ public class Account
 	public void deposit(float qty)
 	{
 		this.balance += qty;
-	}
-	
-	// toString
-	public String toString()
-	{
-		return "Name: " + this.firstName + " " + this.lastName + "\tAccount Number: " + this.accountNum + "\tBalance: $" + this.balance; 
 	}
 }
