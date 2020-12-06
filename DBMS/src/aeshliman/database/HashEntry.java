@@ -3,29 +3,26 @@ package aeshliman.database;
 import java.util.LinkedList;
 import java.util.concurrent.locks.*;
 
-public class MyHash
+public class HashEntry
 {
 	// Instance variables
 	private LinkedList<Account> accounts;
 	
 	// Locks
 	private ReentrantReadWriteLock rwLock;
-	private Lock readLock;
-	private Lock writeLock;
 	
 	// Constructors
-	public MyHash()
+	public HashEntry()
 	{
 		// Initialize locks
 		rwLock = new ReentrantReadWriteLock();
-		readLock = rwLock.readLock();
-		writeLock = rwLock.writeLock();
 		
 		// Initialize instance variables
 		this.accounts = new LinkedList<Account>();
 	}
 	
-	public ReentrantReadWriteLock getRWLock()
+	// Getters
+	public ReentrantReadWriteLock getLock()
 	{
 		return rwLock;
 	}
@@ -35,21 +32,16 @@ public class MyHash
 		return this.accounts;
 	}
 	
-	// Adds a new account to the list
-	public void add(Account data)
-	{
-		writeLock.lock();
-		this.accounts.add(data);
-		writeLock.unlock();
-	}
-	
-	// Returns the first account in the list
 	public Account getFirst()
 	{
-		readLock.lock();
 		Account temp = new Account(this.accounts.getFirst());
-		readLock.unlock();
 		return temp;
+	}
+	
+	// Operations
+	public void add(Account data)
+	{
+		this.accounts.add(data);
 	}
 	
 	public Account findAccount(int accountNum)
@@ -67,12 +59,10 @@ public class MyHash
 	{
 		String toFile ="";
 		
-		readLock.lock();
 		for(Account acc : accounts)
 		{
 			toFile += acc.formatFile() + "\n";
 		}
-		readLock.unlock();
 		
 		return toFile.trim();
 	}
@@ -81,14 +71,12 @@ public class MyHash
 	public String toString()
 	{
 		String toString = "";
-		readLock.lock();
 		
 		for(int i=0; i<this.accounts.size(); i++)
 		{
 			toString += this.accounts.get(i).toString() + "\n";
 		}
 		
-		readLock.unlock();
 		return toString;
 	}
 }

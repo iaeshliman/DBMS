@@ -6,26 +6,22 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.locks.*;
 
-public class DataManager
+public class DataRepository
 {
 	// Instance variables
-	private MyHash[] hashes;
+	private HashEntry[] hashes;
 	private File srcFile;
 	private File dstFile;
 	private File logFile;
 	
 	// Locks
 	private ReentrantReadWriteLock rwLock;
-	private Lock readLock;
-	private Lock writeLock;
 	
 	// Constructor
-	public DataManager(String src, String dst, String log)
+	public DataRepository(String src, String dst, String log)
 	{		
 		// Initialize locks
-		this.rwLock = new ReentrantReadWriteLock();
-		this.readLock = rwLock.readLock();
-		this.writeLock = rwLock.writeLock();
+		this.rwLock = new ReentrantReadWriteLock(true);
 		
 		// Initialize instance variables
 		this.srcFile = new File(src);
@@ -33,26 +29,22 @@ public class DataManager
 		this.logFile = new File(log);
 		
 		// Initialize hash table
-		this.hashes = new MyHash[20];
+		this.hashes = new HashEntry[20];
 		for(int i=0; i<hashes.length; i++)
 		{
-			hashes[i] = new MyHash();
+			hashes[i] = new HashEntry();
 		}
 	}
 	
-	public File getSrcFile()
+	// Getters
+	public ReentrantReadWriteLock getLock()
 	{
-		return this.srcFile;
+		return this.rwLock;
 	}
 	
-	public File getDstFile()
+	public HashEntry getAccount(int account)
 	{
-		return this.dstFile;
-	}
-	
-	public File getLogFile()
-	{
-		return this.logFile;
+		return hashes[account%20];
 	}
 	
 	// Operations
@@ -65,13 +57,11 @@ public class DataManager
 				String[] line = scan.nextLine().split("\t");
 				
 				int accountNum = Integer.parseInt(line[2]);
-				double balance = Double.parseDouble(line[3]);
+				float balance = Float.parseFloat(line[3]);
 				
 				Account temp = new Account(line[0],line[1],accountNum,balance);
 				
-				writeLock.lock();
 				hashes[accountNum%hashes.length].add(temp);
-				writeLock.unlock();
 			}
 		}
 		catch(FileNotFoundException e)
@@ -111,34 +101,25 @@ public class DataManager
 	{
 		String toFile = "";
 		
-		readLock.lock();
-		for(MyHash hash : hashes)
+		for(HashEntry hash : hashes)
 		{
 			toFile += hash.formatFile() + "\n";
 		}
-		readLock.unlock();
 		
 		return toFile.trim();
-	}
-	
-	public MyHash getAccount(int account)
-	{
-		return hashes[account%20];
 	}
 	
 	// toString
 	public String toString()
 	{
 		String toString = "";
-		readLock.lock();
 		
-		for(MyHash hash : hashes)
+		for(HashEntry hash : hashes)
 		{
 			toString += "Key " + hash.getFirst().getAccountNum()%hashes.length + "\n";
 			toString += hash.toString() + "\n";
 		}
 		
-		readLock.unlock();
 		return toString;
 	}
 }

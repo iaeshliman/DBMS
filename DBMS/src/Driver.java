@@ -1,10 +1,8 @@
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Random;
-import aeshliman.UI.TellerInterface;
-import aeshliman.database.DataManager;
-import aeshliman.database.DatabaseManager;
-import aeshliman.database.PortThread;
+import aeshliman.DBMS.PortManager;
+import aeshliman.UI.TellerManager;
+import aeshliman.database.DataRepository;
 
 /*
  * Author: Isaac Aeshliman
@@ -12,34 +10,38 @@ import aeshliman.database.PortThread;
  * Description:
  */
 
-public class Driver// extends Thread
+public class Driver
 {	
 	public static void main(String[] args)
-	{	
+	{
+		// Files for persistent storage
+		String srcFile = "Accounts.txt";
+		String dstFile = "AccountPrimary.txt";
+		String logFile = "LogFile.txt";
 		
-		DatabaseManager dbms = new DatabaseManager();
-		/*
-		DataManager dm = dbms.getDM();
+		// Shared queues for transaction processing
+		Queue<String> requests = new LinkedList<String>();
+		Queue<String> responses = new LinkedList<String>();
+
+		// Initialization of objects
+		DataRepository data = new DataRepository(srcFile,dstFile,logFile);
+		PortManager portManager = new PortManager(requests,responses,data);
+		TellerManager tellerManager = new TellerManager(requests,responses);
 		
-		//System.out.println("===== Current State of the Data Manager =====\n" + dm);
+		// Starting threads and reading from persistent storage
+		data.readFile();
+		portManager.startPorts();
+		tellerManager.startTellers();
 		
-		Queue<String> reqs = dbms.getRequests();
-		LinkedList<PortThread> threads = dbms.getThreads();
+		// Checks that all tellers have finished and all ports are waiting for new requests
+		while(tellerManager.tellersRunning()) {}
+		while(!portManager.portsWaiting()) {}
 		
-		reqs.add("42020 42040 1000;42060 42080 500;42100 42001 50000");
-		reqs.add("42021 42041 1500;42061 42081 250");
+		// Interrupts all ports as there will be no more notify calls
+		portManager.portsInterrupt();
 		
-		threads.get(0).start();
-		
-		//System.out.println("===== Updated State of the Data Manager =====\n" + dm);
-		*/
-		
-		TellerInterface tellerInterface = new TellerInterface(dbms,3);
-		tellerInterface.startTellers();
-		
-		Queue<String> q = dbms.getRequests();
-		
-		q.forEach(System.out::println);
-		
+		// Stores changes into persistent storage and appends <END> to log file
+		data.writeFile();
+		data.appendLog("<END>");
 	}
 }

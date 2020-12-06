@@ -12,10 +12,10 @@ public class Account
 	private String firstName;
 	private String lastName;
 	private int accountNum;
-	private double balance;
+	private float balance;
 	
 	// Constructors
-	public Account(String firstName, String lastName, int accountNum, double balance)
+	public Account(String firstName, String lastName, int accountNum, float balance)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
