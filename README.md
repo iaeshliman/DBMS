@@ -20,4 +20,4 @@ Backup data repository is updated synchronously with primary data updates.
 Log files for primary ports and backup ports are updated as changes are performed.
 Can handle any number of teller, primary ports, or transactions.
 
-MIT © [Isaac Aeshliman]()
+MIT © [iaeshliman]()
