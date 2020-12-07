@@ -13,11 +13,11 @@ Once all teller requests are finished and processed, all threads are shut down a
 Project was developed as an assignment for advanced database management course
 
 ## Features
-Multiple threads accesses shared data structures concurrently.
-Deadlock cases are handled via a rollback and retry with a higher priority lock.
-Threads share two queues for communicating workflow between threads.
-Backup data repository is updated synchronously with primary data updates.
-Log files for primary ports and backup ports are updated as changes are performed.
-Can handle any number of teller, primary ports, or transactions.
+* Multiple threads accesses shared data structures concurrently.
+* Deadlock cases are handled via a rollback and retry with a higher priority lock.
+* Threads share two queues for communicating workflow between threads.
+* Backup data repository is updated synchronously with primary data updates.
+* Log files for primary ports and backup ports are updated as changes are performed.
+* Can handle any number of teller, primary ports, or transactions.
 
 MIT © [Isaac Aeshliman](https://github.com/iaeshliman)
