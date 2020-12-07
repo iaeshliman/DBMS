@@ -1,4 +1,4 @@
-##Database Management System Simulation
+## Database Management System Simulation
 This project simulates the process of a database management system.
 It utilizes locks to ensure thread safety and a rollback mechanic to account for deadlocks.
 All transactions are atomic and all operations are recorded in a log file.
@@ -9,10 +9,10 @@ Before a port commits changes, a backup port performs the request on a backup da
 Once the backup has been successful, the port can complete its commit and send a response to the teller.
 Once all teller requests are finished and processed, all threads are shut down and the changes are stored to a persistent file storage.
 
-##Motivation
+## Motivation
 Project was developed as an assignment for advanced database management course
 
-##Features
+## Features
 Multiple threads accesses shared data structures concurrently.
 Deadlock cases are handled via a rollback and retry with a higher priority lock.
 Threads share two queues for communicating workflow between threads.
