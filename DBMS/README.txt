@@ -1,33 +1,23 @@
-The Process of Performing a Transaction
+##Database Management System Simulation
+This project simulates the process of a database management system.
+It utilizes locks to ensure thread safety and a rollback mechanic to account for deadlocks.
+All transactions are atomic and all operations are recorded in a log file.
+The project contains a number of teller threads representing bank tellers each submitting account transfers to a unified database.
+The tellers wait for a response before submitting the next request.
+A number of port threads read the requests and process them, performing the operations on the data atomically.
+Before a port commits changes, a backup port performs the request on a backup data repository and sends a confirmation message to the port.
+Once the backup has been successful, the port can complete its commit and send a response to the teller.
+Once all teller requests are finished and processed, all threads are shut down and the changes are stored to a persistent file storage.
 
-	1) Thread pulls from queue
-	2) Parse the request
-		A) Find src account
-		B) Find dst account
-		C) Find balance transfer
-	3) Lock account/update data
-	4) Commit changes to persistent storage
-	5) Return response
-	
-Formatting of Log File
-	
-	REQ : the request statement string
-		"TRANS ID - REQ: 3124124 1241234 21312;3145781 158178 2147;852154 1475 100;486189 168416 200"
-	UPDATE : the ordering of changes to data
-		"TRANS ID - UPDATE: 3124124 -21312"
-		"TRANS ID - UPDATE: 1241234 21312"
-		"TRANS ID - UPDATE: 3145781 -2147"
-		"TRANS ID - UPDATE: 158178 2147"
-		"TRANS ID - UPDATE: 852154 -100"
-		
-		
-		"TRANS ID - UPDATE: 1475 100"
-		"TRANS ID - UPDATE: 486189 -200"
-		"TRANS ID - UPDATE: 168416 200"
-	COMMIT : save changes to persistent storage
-		"TRANS ID - COMMIT FILENAME"
-	ROLL : undo changes to data
-		"TRANS ID - ROLL UPDATE: X Y"
+##Motivation
+Project was developed as an assignment for advanced database management course
 
-		
-		
+##Features
+Multiple threads accesses shared data structures concurrently.
+Deadlock cases are handled via a rollback and retry with a higher priority lock.
+Threads share two queues for communicating workflow between threads.
+Backup data repository is updated synchronously with primary data updates.
+Log files for primary ports and backup ports are updated as changes are performed.
+Can handle any number of teller, primary ports, or transactions.
+
+MIT © [Isaac Aeshliman]()

@@ -1,5 +1,6 @@
 package aeshliman.DBMS;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -10,9 +11,11 @@ import aeshliman.database.HashEntry;
 
 /*
  * Author: Isaac Aeshliman
- * Date: 12/6/2020
+ * Date: 12/7/2020
  * Description: A port in the dbms reading from the request queue, processing account transfers
- * 				in an atomic manner, updating a log file, and writing to the response queue
+ * 				in an atomic manner, updating a log file, and writing to the response queue. Also
+ * 				writes to the backup request queue and reads from the response hashtable. Requires
+ * 				a backup be completed before committing account transfer.
  */
 
 public class Port extends Thread
@@ -23,12 +26,16 @@ public class Port extends Thread
 	// Instance Variables
 	private Queue<String> requests;
 	private Queue<String> responses;
+	private Queue<String> backupRequests;
+	private Hashtable<Integer,String> backupResponses;
 	private DataRepository data;
 	
-	public Port(Queue<String> requests, Queue<String> responses, DataRepository data)
+	public Port(Queue<String> requests, Queue<String> responses, Queue<String> backupRequests, Hashtable<Integer,String> backupResponses, DataRepository data)
 	{
 		this.requests = requests;
 		this.responses = responses;
+		this.backupRequests = backupRequests;
+		this.backupResponses = backupResponses;
 		this.data = data;
 	}
 	
@@ -46,6 +53,7 @@ public class Port extends Thread
 		}
 	}
 	
+	// Operations
 	public String readRequest()
 	{
 		synchronized(requests)
@@ -59,12 +67,35 @@ public class Port extends Thread
 		}
 	}
 	
+	public String readBackupResponse(int id)
+	{
+		synchronized(backupResponses)
+		{
+			while(backupResponses.get(id)==null)
+			{
+				try { backupResponses.wait(); }
+				catch(InterruptedException e) { return null; }
+			}
+				
+			return backupResponses.remove(id);
+		}
+	}
+	
 	public void writeResponse(String response)
 	{
 		synchronized(responses)
 		{
 			responses.add(response);
 			responses.notify();
+		}
+	}
+	
+	public void writeBackupRequest(String request)
+	{
+		synchronized(backupRequests)
+		{
+			backupRequests.add(request);
+			backupRequests.notify();
 		}
 	}
 	
@@ -80,7 +111,7 @@ public class Port extends Thread
 		// Will wait until read lock is available
 		try
 		{
-			while(!data.getLock().readLock().tryLock(1,TimeUnit.MILLISECONDS)) {}
+			while(!data.getLock().readLock().tryLock(1000,TimeUnit.MILLISECONDS)) {}
 		}
 		catch(InterruptedException e) {}
 		
@@ -95,21 +126,30 @@ public class Port extends Thread
 			// Locks entire data repository to ensure successful update
 			try
 			{
-				while(!data.getLock().writeLock().tryLock(1,TimeUnit.MILLISECONDS)) {}
+				while(!data.getLock().writeLock().tryLock(1000,TimeUnit.MILLISECONDS)) {}
 			}
 			catch(InterruptedException e) {}
 			forceUpdate(req);
+			
+			// Sends request for backup and waits until it receives response
+			writeBackupRequest(req);
+			readBackupResponse(id);
+			
+			// Commits and unlocks data repository
+			data.appendLog("<COMMIT " + id + ">\n");
 			data.getLock().writeLock().unlock();
 		}
 		else
 		{
-			// Unlocks each lock
+			// Sends request for backup and waits until it receives response
+			writeBackupRequest(req);
+			readBackupResponse(id);
+			
+			// Commits and unlocks locks and data repository
+			data.appendLog("<COMMIT " + id + ">\n");
 			locks.forEach((lock)->lock.unlock());
 			data.getLock().readLock().unlock();
 		}
-		
-		// Commits update to log file
-		data.appendLog("<COMMIT " + id + ">\n");
 		
 		return "<COMPLETE " + id + ">";
 	}

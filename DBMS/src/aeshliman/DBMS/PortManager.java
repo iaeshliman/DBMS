@@ -1,6 +1,7 @@
 package aeshliman.DBMS;
 
 import java.lang.Thread.State;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Queue;
 import aeshliman.database.DataRepository;
@@ -20,23 +21,23 @@ public class PortManager
 	// Instance Variables
 	private LinkedList<Port> ports;
 	
-	public PortManager(Queue<String> requests, Queue<String> responses, DataRepository data)
+	public PortManager(Queue<String> requests, Queue<String> responses, Queue<String> backupRequests, Hashtable<Integer,String> backupResponses, DataRepository data)
 	{
 		this.ports = new LinkedList<Port>();
 		
 		for(int i=0; i<defaultPortCount; i++)
 		{
-			ports.add(new Port(requests,responses,data));
+			ports.add(new Port(requests,responses,backupRequests,backupResponses,data));
 		}
 	}
 	
-	public PortManager(Queue<String> requests, Queue<String> responses, DataRepository data, int portCount)
+	public PortManager(Queue<String> requests, Queue<String> responses, Queue<String> backupRequests, Hashtable<Integer,String> backupResponses, DataRepository data, int portCount)
 	{
 		this.ports = new LinkedList<Port>();
 		
 		for(int i=0; i<portCount; i++)
 		{
-			ports.add(new Port(requests,responses,data));
+			ports.add(new Port(requests,responses,backupRequests,backupResponses,data));
 		}
 	}
 	
